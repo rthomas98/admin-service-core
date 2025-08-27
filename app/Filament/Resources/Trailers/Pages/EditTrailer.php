@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Trailers\Pages;
 
-use App\Filament\Resources\Trailers\TrailerResource;
+use App\Filament\Resources\TrailerResource;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 

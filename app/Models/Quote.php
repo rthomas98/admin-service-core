@@ -18,6 +18,19 @@ class Quote extends Model
      * @var array<string>
      */
     protected $fillable = [
+        // Form submission fields
+        'name',
+        'company',
+        'email',
+        'phone',
+        'project_type',
+        'services',
+        'start_date',
+        'duration',
+        'location',
+        'message',
+        
+        // Quote management fields
         'company_id',
         'customer_id',
         'quote_number',
@@ -40,6 +53,7 @@ class Quote extends Model
         'requested_delivery_date',
         'requested_pickup_date',
         'accepted_date',
+        'sent_date',
         'converted_service_order_id',
     ];
 
@@ -49,11 +63,14 @@ class Quote extends Model
      * @var array<string, string>
      */
     protected $casts = [
+        'services' => 'array',
+        'start_date' => 'date',
         'quote_date' => 'date',
         'valid_until' => 'date',
         'requested_delivery_date' => 'date',
         'requested_pickup_date' => 'date',
         'accepted_date' => 'date',
+        'sent_date' => 'datetime',
         'items' => 'array',
         'subtotal' => 'decimal:2',
         'tax_rate' => 'decimal:4',

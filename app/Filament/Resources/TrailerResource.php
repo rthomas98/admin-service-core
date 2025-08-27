@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\Trailers;
+namespace App\Filament\Resources;
 
 use App\Filament\Resources\Trailers\Pages\CreateTrailer;
 use App\Filament\Resources\Trailers\Pages\EditTrailer;

@@ -16,4 +16,19 @@ class ListInvoices extends ListRecords
             CreateAction::make(),
         ];
     }
+    
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            \App\Filament\Widgets\InvoicePaymentStats::class,
+        ];
+    }
+    
+    protected function getFooterWidgets(): array
+    {
+        return [
+            \App\Filament\Widgets\PendingInvoicesTable::class,
+            \App\Filament\Widgets\OverdueInvoicesAlert::class,
+        ];
+    }
 }

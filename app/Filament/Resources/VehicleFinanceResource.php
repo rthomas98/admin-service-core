@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\VehicleFinances;
+namespace App\Filament\Resources;
 
 use App\Filament\Resources\VehicleFinances\Pages\CreateVehicleFinance;
 use App\Filament\Resources\VehicleFinances\Pages\EditVehicleFinance;

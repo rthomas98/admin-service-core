@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\VehicleFinances\Pages;
 
-use App\Filament\Resources\VehicleFinances\VehicleFinanceResource;
+use App\Filament\Resources\VehicleFinanceResource;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateVehicleFinance extends CreateRecord

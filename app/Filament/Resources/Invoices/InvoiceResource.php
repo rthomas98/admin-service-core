@@ -57,6 +57,15 @@ class InvoiceResource extends Resource
         ];
     }
     
+    public static function getWidgets(): array
+    {
+        return [
+            \App\Filament\Widgets\InvoicePaymentStats::class,
+            \App\Filament\Widgets\PendingInvoicesTable::class,
+            \App\Filament\Widgets\OverdueInvoicesAlert::class,
+        ];
+    }
+    
     public static function getEloquentQuery(): Builder
     {
         $query = parent::getEloquentQuery();

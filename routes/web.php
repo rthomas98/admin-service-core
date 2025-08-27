@@ -18,5 +18,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 });
 
+// Development mail viewer page (only in local environment)
+if (app()->environment('local')) {
+    Route::get('/dev/mail', function () {
+        return view('mail-dev');
+    })->name('dev.mail');
+}
+
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

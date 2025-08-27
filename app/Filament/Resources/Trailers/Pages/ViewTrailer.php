@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Trailers\Pages;
 
-use App\Filament\Resources\Trailers\TrailerResource;
+use App\Filament\Resources\TrailerResource;
 use App\Filament\Resources\Trailers\Schemas\TrailerForm;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;

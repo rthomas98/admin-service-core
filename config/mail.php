@@ -112,5 +112,17 @@ return [
         'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
         'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
+    
+    /*
+    |--------------------------------------------------------------------------
+    | Admin Email Address
+    |--------------------------------------------------------------------------
+    |
+    | This email address is used to send notifications to the admin team
+    | when new quotes or other important events occur.
+    |
+    */
+    
+    'admin_email' => env('MAIL_ADMIN_EMAIL', 'sales@rawdisposal.com'),
 
 ];
