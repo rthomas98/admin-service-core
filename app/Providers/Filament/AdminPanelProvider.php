@@ -12,6 +12,7 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Widgets\AccountWidget;
+use Filament\Navigation\NavigationGroup;
 use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -38,6 +39,37 @@ class AdminPanelProvider extends PanelProvider
                 'primary' => Color::hex('#5C2C86'),
                 'gray' => Color::hex('#102B3F'),
             ])
+            ->viteTheme('resources/css/filament/admin/theme.css')
+            ->navigationGroups([
+                NavigationGroup::make()
+                    ->label('Fleet Management')
+                    ->icon('heroicon-o-truck')
+                    ->collapsed(false),
+                NavigationGroup::make()
+                    ->label('Customer Management')
+                    ->icon('heroicon-o-user-group')
+                    ->collapsed(false),
+                NavigationGroup::make()
+                    ->label('Financial')
+                    ->icon('heroicon-o-currency-dollar')
+                    ->collapsed(false),
+                NavigationGroup::make()
+                    ->label('Waste Management')
+                    ->icon('heroicon-o-trash')
+                    ->collapsed(false),
+                NavigationGroup::make()
+                    ->label('Operations')
+                    ->icon('heroicon-o-cog-6-tooth')
+                    ->collapsed(false),
+                NavigationGroup::make()
+                    ->label('Communications')
+                    ->icon('heroicon-o-bell-alert')
+                    ->collapsed(false),
+            ])
+            ->collapsibleNavigationGroups(true)
+            ->sidebarCollapsibleOnDesktop()
+            ->maxContentWidth('full')
+            ->font('Inter')
             ->tenant(Company::class)
             ->tenantRegistration(false)
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')

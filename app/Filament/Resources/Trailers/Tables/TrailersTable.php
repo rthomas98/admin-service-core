@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Trailers\Tables;
 
-use App\Filament\Resources\Trailers\TrailerResource;
+use App\Filament\Resources\TrailerResource;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\ViewAction;

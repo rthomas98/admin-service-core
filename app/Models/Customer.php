@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Enums\NotificationCategory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Facades\Auth;
 
 class Customer extends Model
@@ -51,18 +53,33 @@ class Customer extends Model
         'divisions',
         'business_type',
         'tax_code_name',
+        'notification_preferences',
+        'notifications_enabled',
+        'preferred_notification_method',
+        'sms_number',
+        'sms_verified',
+        'sms_verified_at',
     ];
 
     protected function casts(): array
     {
         return [
             'customer_since' => 'date',
+            'notification_preferences' => 'array',
+            'notifications_enabled' => 'boolean',
+            'sms_verified' => 'boolean',
+            'sms_verified_at' => 'datetime',
         ];
     }
 
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
+    }
+
+    public function notifications(): MorphMany
+    {
+        return $this->morphMany(Notification::class, 'recipient');
     }
 
     public function getFullNameAttribute(): ?string
@@ -129,6 +146,46 @@ class Customer extends Model
     public function scopeTaxExempt(Builder $query): Builder
     {
         return $query->whereNotNull('tax_exemption_details');
+    }
+
+    // Notification Preference Methods
+    public function isNotificationEnabled(NotificationCategory $category): bool
+    {
+        if (!$this->notifications_enabled) {
+            return false;
+        }
+
+        $preferences = $this->notification_preferences ?? [];
+        
+        return $preferences[$category->value]['enabled'] ?? true;
+    }
+
+    public function getNotificationMethod(NotificationCategory $category): string
+    {
+        $preferences = $this->notification_preferences ?? [];
+        
+        return $preferences[$category->value]['method'] ?? $this->preferred_notification_method;
+    }
+
+    public function canReceiveSms(): bool
+    {
+        return $this->sms_number && $this->sms_verified;
+    }
+
+    public function getNotificationEmail(): ?string
+    {
+        // Try to get the first email from the emails field, or use a default email field
+        if ($this->emails) {
+            $emails = is_array($this->emails) ? $this->emails : json_decode($this->emails, true);
+            return $emails[0] ?? null;
+        }
+        
+        return null;
+    }
+
+    public function updateNotificationPreferences(array $preferences): void
+    {
+        $this->update(['notification_preferences' => $preferences]);
     }
 
     // Validation Rules

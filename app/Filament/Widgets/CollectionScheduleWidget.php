@@ -43,11 +43,16 @@ class CollectionScheduleWidget extends TableWidget
                 ->label('Time')
                 ->time('H:i')
                 ->weight('bold')
-                ->color(fn ($record) => 
-                    Carbon::parse($record->scheduled_date . ' ' . $record->scheduled_time)->isPast() 
-                        ? 'gray' 
-                        : 'primary'
-                ),
+                ->color(function ($record) {
+                    // Get the scheduled date and time safely
+                    $scheduledDateTime = Carbon::parse($record->scheduled_date);
+                    // If scheduled_time is set, use its time component
+                    if ($record->scheduled_time) {
+                        $time = Carbon::parse($record->scheduled_time);
+                        $scheduledDateTime = $scheduledDateTime->setTime($time->hour, $time->minute, $time->second);
+                    }
+                    return $scheduledDateTime->isPast() ? 'gray' : 'primary';
+                }),
                 
             TextColumn::make('route.name')
                 ->label('Route')

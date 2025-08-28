@@ -35,4 +35,15 @@ return [
         ],
     ],
 
+    'twilio' => [
+        'sid' => env('TWILIO_SID'),
+        'token' => env('TWILIO_AUTH_TOKEN'),
+        'from' => env('TWILIO_FROM'),
+    ],
+
+    'textlocal' => [
+        'api_key' => env('TEXTLOCAL_API_KEY'),
+        'sender' => env('TEXTLOCAL_SENDER'),
+    ],
+
 ];

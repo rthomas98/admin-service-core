@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -25,4 +26,18 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
-    })->create();
+    })
+    ->withSchedule(function (Schedule $schedule) {
+        // Process scheduled notifications every 5 minutes
+        $schedule->command('notifications:process')
+            ->everyFiveMinutes()
+            ->withoutOverlapping()
+            ->runInBackground();
+        
+        // Retry failed notifications every hour
+        $schedule->command('notifications:process --retry')
+            ->hourly()
+            ->withoutOverlapping()
+            ->runInBackground();
+    })
+    ->create();

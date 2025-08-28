@@ -9,18 +9,18 @@ The Laravel Boost guidelines are specifically curated by Laravel maintainers for
 This application is a Laravel application and its main Laravel ecosystems package & versions are below. You are an expert with them all. Ensure you abide by these specific packages & versions.
 
 - php - 8.3.24
-- filament/filament (FILAMENT) - v4
-- inertiajs/inertia-laravel (INERTIA) - v2
-- laravel/framework (LARAVEL) - v12
-- laravel/prompts (PROMPTS) - v0
-- laravel/wayfinder (WAYFINDER) - v0
-- livewire/livewire (LIVEWIRE) - v3
-- laravel/pint (PINT) - v1
-- pestphp/pest (PEST) - v4
-- @inertiajs/react (INERTIA) - v2
-- react (REACT) - v19
-- tailwindcss (TAILWINDCSS) - v4
-- @laravel/vite-plugin-wayfinder (WAYFINDER) - v0
+- filament/filament (FILAMENT) - v4.0.3
+- inertiajs/inertia-laravel (INERTIA) - v2.0.5
+- laravel/framework (LARAVEL) - v12.26.1
+- laravel/prompts (PROMPTS) - v0.3.6
+- laravel/wayfinder (WAYFINDER) - v0.1.10
+- livewire/livewire (LIVEWIRE) - v3.6.4
+- laravel/pint (PINT) - v1.24.0
+- pestphp/pest (PEST) - v4.0.3
+- @inertiajs/react (INERTIA) - v2.1.0
+- react (REACT) - v19.0.0
+- tailwindcss (TAILWINDCSS) - v4.0.0
+- @laravel/vite-plugin-wayfinder (WAYFINDER) - v0.1.3
 
 
 ## Conventions
@@ -643,3 +643,136 @@ export default function Edit() {
 - Every change must be programmatically tested. Write a new test or update an existing test, then run the affected tests to make sure they pass.
 - Run the minimum number of tests needed to ensure code quality and speed. Use `php artisan test` with a specific filename or filter.
 </laravel-boost-guidelines>
+
+# Project-Specific Information
+
+## Database
+- **Engine**: PostgreSQL (pgsql) - Primary database engine
+- **Default Connection**: pgsql
+- **Available Connections**: sqlite, mysql, mariadb, pgsql, sqlsrv
+
+## Models (30 total)
+### Core Business Models
+- Company, Customer (with CustomerType enum)
+- Driver (with DriverStatus enum)
+- Vehicle (with VehicleType, VehicleStatus enums)
+- Trailer (with TrailerType enum)
+- Equipment (with EquipmentType enum)
+
+### Operations Models
+- DriverAssignment
+- ServiceOrder, ServiceSchedule, ServiceArea
+- DeliverySchedule
+- EmergencyService
+- WorkOrder (with WorkOrderStatus, WorkOrderAction enums)
+- Quote
+
+### Financial Models
+- Invoice, Payment
+- Pricing
+- VehicleFinance, FinanceCompany (with FinanceType enum)
+
+### Fleet Management Models
+- MaintenanceLog (with MaintenanceType enum)
+- FuelLog (with FuelType enum)
+- VehicleInspection
+- VehicleMaintenance  
+- VehicleRegistration
+
+### Waste Management Models
+- WasteRoute, WasteCollection, DisposalSite
+
+### Communication Models
+- Notification (with NotificationType, NotificationCategory, NotificationStatus enums)
+- NotificationTemplate
+
+### Other Models
+- User (authentication)
+- TimePeriod enum for scheduling
+
+## Filament Resources (28 total)
+All resources follow structured organization with:
+- `{Resource}Resource.php` - Main resource class
+- `Pages/` - CRUD pages (List, Create, Edit, View)
+- `Schemas/` - Form schemas
+- `Tables/` - Table configurations
+
+### Complete List
+Customers, DeliverySchedules, DriverAssignments, Drivers, EmergencyServices, Equipment, FinanceCompanies, FuelLogs, Invoices, MaintenanceLogs, Notifications, Payments, Pricings, Quotes, ServiceAreas, ServiceOrders, ServiceSchedules, Trailers, VehicleFinances, VehicleInspections, VehicleMaintenances, VehicleRegistrations, Vehicles, WorkOrders
+
+**Note**: WasteRoute, WasteCollection, and DisposalSite models exist but do not have Filament resources yet.
+
+## Filament Widgets (16 total)
+- **Stats Widgets**: FleetOverviewStats, RevenueKpiStats, WasteCollectionStats, InvoicePaymentStats, NotificationStats
+- **Chart Widgets**: ActiveAssignmentsChart, DriverPerformanceChart, FuelConsumptionChart, FleetUtilizationChart, WasteVolumeChart
+- **Alert Widgets**: EmergencyServicesAlert, OverdueInvoicesAlert
+- **Table Widgets**: RecentDriverAssignments, PendingInvoicesTable
+- **Other Widgets**: DisposalSitesOverview, CollectionScheduleWidget
+
+## Filament Actions
+Custom actions in `app/Filament/Actions/`:
+- ViewAction, EditAction
+- DeleteBulkAction, BulkActionGroup
+
+## API Endpoints
+- `/api/quotes` - Quote submission endpoint (QuoteController)
+- Additional routes in `routes/api.php`
+
+## Mail Classes
+- QuoteSubmitted, QuoteConfirmation, QuoteResponse
+- LivTransportQuoteSubmitted, LivTransportQuoteConfirmation
+- GenericNotification
+
+## Jobs
+- SendNotificationJob - Queued notification processing
+
+## Services
+- NotificationService - Manages notification logic
+- SmsService - SMS messaging integration
+
+## Console Commands
+- TestEmail, TestPasswordReset, TestMail - Email testing
+- TestTenancy - Multi-tenancy testing
+- TestRawDisposalSetup - RAW Disposal setup testing
+- ListUsersCommand - User listing
+- ProcessNotifications - Notification processing
+
+## Seeders
+- CreateAdminUserSeeder, CreateUsersSeeder
+- CompanySeeder, CustomerImportSeeder
+- LivTransportSeeder, RawDisposalSeeder
+- NotificationTemplateSeeder
+- DashboardDataSeeder, CompleteDashboardSeeder, SimpleDashboardSeeder
+- VehicleInspectionSeeder, VehicleMaintenanceSeeder
+- DatabaseSeeder (main seeder)
+
+## Inertia Pages (React/TypeScript)
+### Public Pages
+- welcome.tsx, dashboard.tsx
+
+### Auth Pages
+- login, register, forgot-password, reset-password
+- verify-email, confirm-password
+
+### Settings Pages
+- profile, password, appearance
+
+## Frontend Stack
+- React 19.0.0 with TypeScript 5.7.2
+- Inertia.js 2.1.0 for SPA functionality
+- Tailwind CSS 4.0.0 with various plugins
+- Headless UI 2.2.0 and Radix UI components
+- Lucide React icons
+- Vite 5.4.11 for bundling
+
+## Development Tools
+- ESLint 9.17.0 with React plugins
+- Prettier 3.4.2 with Tailwind plugin
+- TypeScript for type checking
+- Concurrently for parallel tasks
+
+[byterover-mcp]
+
+# important 
+always use byterover-retrieve-knowledge tool to get the related context before any tasks 
+always use byterover-store-knowledge to store all the critical informations after sucessful tasks

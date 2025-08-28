@@ -1,0 +1,517 @@
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+
+/* ========================================
+   DESIGN SYSTEM - ENTERPRISE DASHBOARD
+   ======================================== */
+
+/* Design Tokens & Spacing Scale */
+:root {
+    /* Spacing Scale (4px base) */
+    --space-xs: 0.25rem;   /* 4px */
+    --space-sm: 0.5rem;    /* 8px */
+    --space-md: 0.75rem;   /* 12px */
+    --space-lg: 1rem;      /* 16px */
+    --space-xl: 1.5rem;    /* 24px */
+    --space-2xl: 2rem;     /* 32px */
+    --space-3xl: 3rem;     /* 48px */
+    
+    /* Border Radius */
+    --radius-sm: 0.25rem;  /* 4px */
+    --radius-md: 0.5rem;   /* 8px */
+    --radius-lg: 0.75rem;  /* 12px */
+    
+    /* Enhanced Color System with WCAG AA Compliance */
+    --color-primary: #5C2C86;
+    --color-primary-hover: #4A2370;
+    --color-primary-light: #F4EFFA;
+    
+    --color-success: #10B981;
+    --color-warning: #F59E0B;
+    --color-danger: #EF4444;
+    --color-info: #3B82F6;
+    
+    /* Improved Contrast for Accessibility */
+    --text-primary: #111827;
+    --text-secondary: #4B5563;
+    --text-muted: #6B7280;
+    --text-disabled: #9CA3AF;
+    
+    /* Shadows for Depth */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.15);
+    
+    /* Transitions */
+    --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dark Mode Variables */
+.dark {
+    --text-primary: #F9FAFB;
+    --text-secondary: #D1D5DB;
+    --text-muted: #9CA3AF;
+    --text-disabled: #6B7280;
+    
+    --color-primary-light: #2D1B42;
+}
+
+/* ========================================
+   VISUAL HIERARCHY IMPROVEMENTS
+   ======================================== */
+
+/* Dashboard Layout Enhancements */
+.fi-dashboard-page {
+    @apply space-y-6;
+}
+
+/* Widget Visual Hierarchy */
+.fi-wi-stats-overview {
+    @apply bg-white dark:bg-gray-800 rounded-lg shadow-sm;
+    transition: all var(--transition-base);
+}
+
+.fi-wi-stats-overview:hover {
+    @apply shadow-md;
+    transform: translateY(-2px);
+}
+
+/* Primary KPI Styling */
+.fi-wi-stats-overview-stat:first-child {
+    @apply ring-2 ring-primary-500/20 bg-primary-50 dark:bg-primary-900/20;
+}
+
+.fi-wi-stats-overview-stat-label {
+    @apply text-xs font-medium tracking-wide uppercase text-gray-600 dark:text-gray-400;
+}
+
+.fi-wi-stats-overview-stat-value {
+    @apply text-3xl font-bold text-gray-900 dark:text-gray-100;
+}
+
+/* Chart Improvements */
+.fi-wi-chart {
+    @apply bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6;
+}
+
+.fi-wi-chart canvas {
+    @apply rounded-md;
+}
+
+/* ========================================
+   MOBILE RESPONSIVENESS
+   ======================================== */
+
+/* Mobile Touch Targets (44x44px minimum) */
+@media (max-width: 768px) {
+    /* Navigation Improvements */
+    .fi-sidebar {
+        @apply transform -translate-x-full transition-transform duration-300 ease-in-out;
+        z-index: 9999;
+    }
+    
+    .fi-sidebar.open {
+        @apply translate-x-0;
+    }
+    
+    /* Touch-Friendly Buttons */
+    .fi-btn {
+        @apply min-h-[44px] px-6;
+    }
+    
+    .fi-input {
+        @apply min-h-[44px] text-base;
+    }
+    
+    /* Stack Widgets on Mobile */
+    .fi-dashboard-page .grid {
+        @apply grid-cols-1 gap-4;
+    }
+    
+    /* Responsive Tables */
+    .fi-ta-table {
+        @apply block overflow-x-auto;
+    }
+    
+    .fi-ta-table table {
+        @apply min-w-full;
+    }
+    
+    /* Mobile-Optimized Forms */
+    .fi-fo-form {
+        @apply space-y-6;
+    }
+    
+    .fi-fo-field-wrp {
+        @apply mb-4;
+    }
+}
+
+/* Tablet Optimizations */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .fi-dashboard-page .grid {
+        @apply grid-cols-2 gap-6;
+    }
+}
+
+/* ========================================
+   COLOR ACCESSIBILITY (WCAG AA)
+   ======================================== */
+
+/* High Contrast Text */
+.fi-header-heading {
+    color: var(--text-primary) !important;
+}
+
+.fi-breadcrumb-item {
+    color: var(--text-secondary) !important;
+}
+
+/* Accessible Links */
+a:not(.fi-btn) {
+    color: var(--color-primary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+a:not(.fi-btn):hover {
+    color: var(--color-primary-hover);
+}
+
+a:not(.fi-btn):focus-visible {
+    @apply outline-2 outline-offset-2 outline-primary-500 rounded;
+}
+
+/* Focus States for Accessibility */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    @apply ring-2 ring-primary-500 ring-offset-2;
+}
+
+/* ========================================
+   WIDGET MODERNIZATION
+   ======================================== */
+
+/* Stat Widget Enhancement */
+.fi-wi-stats-overview-stat {
+    @apply relative overflow-hidden;
+}
+
+.fi-wi-stats-overview-stat::before {
+    content: '';
+    @apply absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-primary-500 to-primary-600;
+}
+
+/* Trend Indicators */
+.stat-trend {
+    @apply inline-flex items-center gap-1 text-sm font-medium;
+}
+
+.stat-trend.up {
+    @apply text-green-600 dark:text-green-400;
+}
+
+.stat-trend.down {
+    @apply text-red-600 dark:text-red-400;
+}
+
+/* Loading States */
+.fi-loading {
+    @apply animate-pulse bg-gray-200 dark:bg-gray-700 rounded;
+}
+
+/* Empty States */
+.fi-empty-state {
+    @apply text-center py-12 px-6;
+}
+
+.fi-empty-state-icon {
+    @apply mx-auto h-12 w-12 text-gray-400;
+}
+
+.fi-empty-state-heading {
+    @apply mt-2 text-lg font-semibold text-gray-900 dark:text-gray-100;
+}
+
+/* ========================================
+   FORM IMPROVEMENTS
+   ======================================== */
+
+/* Section Headers */
+.fi-fo-section {
+    @apply border-l-4 border-primary-500 pl-4 mb-6;
+}
+
+.fi-fo-section-heading {
+    @apply text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2;
+}
+
+/* Progressive Form Steps */
+.form-steps {
+    @apply flex items-center justify-between mb-8;
+}
+
+.form-step {
+    @apply flex items-center;
+}
+
+.form-step-number {
+    @apply w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-sm font-medium;
+}
+
+.form-step.active .form-step-number {
+    @apply bg-primary-500 text-white;
+}
+
+.form-step.completed .form-step-number {
+    @apply bg-green-500 text-white;
+}
+
+/* Inline Validation */
+.fi-fo-field-wrp.has-error .fi-input {
+    @apply border-red-500;
+}
+
+.fi-fo-field-wrp .fi-fo-field-helper-text {
+    @apply text-sm mt-1;
+}
+
+/* ========================================
+   TABLE ENHANCEMENTS
+   ======================================== */
+
+/* Better Sorting Indicators */
+.fi-ta-header-cell-sort-button {
+    @apply flex items-center gap-1;
+}
+
+.fi-ta-header-cell-sort-button::after {
+    content: '↕';
+    @apply text-gray-400 text-xs;
+}
+
+.fi-ta-header-cell-sort-button.asc::after {
+    content: '↑';
+    @apply text-primary-500;
+}
+
+.fi-ta-header-cell-sort-button.desc::after {
+    content: '↓';
+    @apply text-primary-500;
+}
+
+/* Row Hover States */
+.fi-ta-row:hover {
+    @apply bg-gray-50 dark:bg-gray-800/50;
+}
+
+/* Bulk Selection */
+.fi-ta-row.selected {
+    @apply bg-primary-50 dark:bg-primary-900/20;
+}
+
+/* Filter Visibility */
+.fi-ta-filters {
+    @apply bg-gray-50 dark:bg-gray-800 p-4 rounded-lg mb-4;
+}
+
+/* ========================================
+   MICRO-INTERACTIONS & ANIMATIONS
+   ======================================== */
+
+/* Button Hover Effects */
+.fi-btn {
+    transition: all var(--transition-fast);
+}
+
+.fi-btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.fi-btn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+/* Card Hover Effects */
+.fi-card:hover {
+    box-shadow: var(--shadow-lg);
+    transition: box-shadow var(--transition-base);
+}
+
+/* Smooth Transitions */
+* {
+    transition: background-color var(--transition-fast),
+                border-color var(--transition-fast),
+                color var(--transition-fast);
+}
+
+/* Loading Skeletons */
+@keyframes skeleton-loading {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.skeleton {
+    background: linear-gradient(
+        90deg,
+        #f0f0f0 25%,
+        #e0e0e0 50%,
+        #f0f0f0 75%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s ease-in-out infinite;
+}
+
+/* ========================================
+   NAVIGATION IMPROVEMENTS
+   ======================================== */
+
+/* Group Related Items */
+.fi-sidebar-group {
+    @apply mb-6;
+}
+
+.fi-sidebar-group-label {
+    @apply text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-2 px-3;
+}
+
+/* Breadcrumbs Enhancement */
+.fi-breadcrumbs {
+    @apply bg-gray-50 dark:bg-gray-800 px-4 py-2 rounded-lg mb-4;
+}
+
+/* Search/Command Palette */
+.fi-global-search {
+    @apply max-w-md;
+}
+
+.fi-global-search-input {
+    @apply pl-10;
+}
+
+/* ========================================
+   DATA VISUALIZATION
+   ======================================== */
+
+/* Modern Chart Styles */
+.chart-container {
+    @apply relative;
+}
+
+.chart-tooltip {
+    @apply absolute bg-gray-900 text-white px-3 py-2 rounded-lg text-sm shadow-xl;
+    pointer-events: none;
+}
+
+/* Sparklines */
+.sparkline {
+    @apply inline-block w-16 h-4;
+}
+
+/* Performance Indicators */
+.performance-badge {
+    @apply inline-flex items-center px-2 py-1 rounded-full text-xs font-medium;
+}
+
+.performance-badge.excellent {
+    @apply bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400;
+}
+
+.performance-badge.good {
+    @apply bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400;
+}
+
+.performance-badge.warning {
+    @apply bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400;
+}
+
+.performance-badge.critical {
+    @apply bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400;
+}
+
+/* ========================================
+   RESPONSIVE UTILITIES
+   ======================================== */
+
+/* Hide on Mobile */
+@media (max-width: 640px) {
+    .hide-mobile {
+        @apply hidden;
+    }
+}
+
+/* Hide on Desktop */
+@media (min-width: 1024px) {
+    .hide-desktop {
+        @apply hidden;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .fi-sidebar,
+    .fi-header,
+    .fi-btn,
+    .no-print {
+        @apply hidden;
+    }
+    
+    .fi-main {
+        @apply max-w-full;
+    }
+}
+
+/* ========================================
+   CUSTOM WIDGET STYLES
+   ======================================== */
+
+/* Emergency Alert Styling */
+.emergency-alert {
+    @apply bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg;
+}
+
+.emergency-alert-title {
+    @apply text-red-800 font-semibold mb-2;
+}
+
+/* Collection Schedule Widget */
+.collection-schedule {
+    @apply space-y-3;
+}
+
+.collection-day {
+    @apply flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg;
+}
+
+.collection-day.today {
+    @apply ring-2 ring-primary-500 bg-primary-50 dark:bg-primary-900/20;
+}
+
+/* Invoice Status Colors */
+.invoice-status {
+    @apply inline-flex items-center px-2 py-1 rounded-full text-xs font-medium;
+}
+
+.invoice-status.pending {
+    @apply bg-yellow-100 text-yellow-800;
+}
+
+.invoice-status.paid {
+    @apply bg-green-100 text-green-800;
+}
+
+.invoice-status.overdue {
+    @apply bg-red-100 text-red-800;
+}
