@@ -26,7 +26,7 @@ class ServiceOrderResource extends Resource
     
     protected static ?string $navigationLabel = 'Service Orders';
     
-    protected static string | UnitEnum | null $navigationGroup = 'Orders';
+    protected static string | UnitEnum | null $navigationGroup = 'Customer Management';
     
     protected static ?int $navigationSort = 1;
 

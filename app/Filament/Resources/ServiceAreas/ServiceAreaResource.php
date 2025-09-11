@@ -26,7 +26,7 @@ class ServiceAreaResource extends Resource
     
     protected static ?string $navigationLabel = 'Service Areas';
     
-    protected static string | UnitEnum | null $navigationGroup = 'Configuration';
+    protected static string | UnitEnum | null $navigationGroup = 'Customer Management';
     
     protected static ?int $navigationSort = 2;
 

@@ -24,9 +24,21 @@ return [
         'https://raw-disposal.test',
         'http://localhost:3000',
         'http://localhost:5173',
+        'http://localhost:8000',
+        'http://localhost:8081', // Expo
+        'http://localhost:19000', // Expo
+        'http://localhost:19001', // Expo
+        'http://localhost:19002', // Expo
+        'http://127.0.0.1:8000',
+        'http://10.0.2.2:8000', // Android emulator
+        'http://192.168.1.104:8081', // Expo on physical device
+        'exp://192.168.1.104:8081', // Expo protocol
     ],
 
-    'allowed_origins_patterns' => [],
+    'allowed_origins_patterns' => [
+        '#^http://192\.168\.\d+\.\d+:\d+$#', // Local network IPs
+        '#^exp://.*$#', // Expo development
+    ],
 
     'allowed_headers' => ['*'],
 
@@ -34,6 +46,6 @@ return [
 
     'max_age' => 0,
 
-    'supports_credentials' => false,
+    'supports_credentials' => true,
 
 ];

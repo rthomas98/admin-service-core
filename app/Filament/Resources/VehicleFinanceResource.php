@@ -17,6 +17,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class VehicleFinanceResource extends Resource
 {
@@ -24,11 +25,11 @@ class VehicleFinanceResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCreditCard;
     
-    protected static string | UnitEnum | null $navigationGroup = 'Financial Management';
+    protected static string | UnitEnum | null $navigationGroup = 'Financial';
     
     protected static ?string $navigationLabel = 'Vehicle Financing';
     
-    protected static ?int $navigationSort = 11;
+    protected static ?int $navigationSort = 4;
 
     public static function form(Schema $schema): Schema
     {
@@ -57,35 +58,19 @@ class VehicleFinanceResource extends Resource
         ];
     }
     
-    public static function canViewAny(): bool
+    public static function getEloquentQuery(): Builder
     {
+        $query = parent::getEloquentQuery();
+        
         $tenant = Filament::getTenant();
         
-        // Only show for LIV Transport company
-        return $tenant && $tenant->isLivTransport();
+        if ($tenant) {
+            $query->where('company_id', $tenant->id);
+        }
+        
+        return $query;
     }
     
-    public static function canCreate(): bool
-    {
-        $tenant = Filament::getTenant();
-        
-        // Only allow creation for LIV Transport company
-        return $tenant && $tenant->isLivTransport();
-    }
-    
-    public static function canEdit(Model $record): bool
-    {
-        $tenant = Filament::getTenant();
-        
-        // Only allow editing for LIV Transport company
-        return $tenant && $tenant->isLivTransport();
-    }
-    
-    public static function canDelete(Model $record): bool
-    {
-        $tenant = Filament::getTenant();
-        
-        // Only allow deletion for LIV Transport company
-        return $tenant && $tenant->isLivTransport();
-    }
+    // Removed tenant restrictions - Financial resources should be visible for all tenants
+    // Data filtering is handled by getEloquentQuery() method based on company_id
 }

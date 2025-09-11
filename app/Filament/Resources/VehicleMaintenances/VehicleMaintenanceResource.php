@@ -9,6 +9,7 @@ use App\Filament\Resources\VehicleMaintenances\Schemas\VehicleMaintenanceForm;
 use App\Filament\Resources\VehicleMaintenances\Tables\VehicleMaintenancesTable;
 use App\Models\VehicleMaintenance;
 use BackedEnum;
+use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
@@ -20,13 +21,13 @@ class VehicleMaintenanceResource extends Resource
 {
     protected static ?string $model = VehicleMaintenance::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-wrench-screwdriver';
+    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-wrench-screwdriver';
     
     protected static ?string $navigationLabel = 'Vehicle Maintenance';
     
     protected static ?string $modelLabel = 'Maintenance Record';
     
-    protected static string | \UnitEnum | null $navigationGroup = 'Fleet Management';
+    protected static string | UnitEnum | null $navigationGroup = 'Fleet Management';
     
     protected static ?int $navigationSort = 2;
     

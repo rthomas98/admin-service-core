@@ -9,6 +9,7 @@ use App\Filament\Resources\Quotes\Schemas\QuoteForm;
 use App\Filament\Resources\Quotes\Tables\QuotesTable;
 use App\Models\Quote;
 use BackedEnum;
+use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -19,6 +20,10 @@ class QuoteResource extends Resource
     protected static ?string $model = Quote::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    
+    protected static string | UnitEnum | null $navigationGroup = 'Customer Management';
+    
+    protected static ?int $navigationSort = 5;
 
     public static function form(Schema $schema): Schema
     {

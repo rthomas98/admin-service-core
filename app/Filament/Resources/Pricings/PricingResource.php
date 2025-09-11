@@ -26,9 +26,9 @@ class PricingResource extends Resource
     
     protected static ?string $navigationLabel = 'Pricing';
     
-    protected static string | UnitEnum | null $navigationGroup = 'Configuration';
+    protected static string | UnitEnum | null $navigationGroup = 'Financial';
     
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 3;
 
     public static function form(Schema $schema): Schema
     {
@@ -70,35 +70,6 @@ class PricingResource extends Resource
         return $query;
     }
     
-    public static function canViewAny(): bool
-    {
-        $tenant = Filament::getTenant();
-        
-        // Only show for RAW Disposal company
-        return $tenant && $tenant->isRawDisposal();
-    }
-    
-    public static function canCreate(): bool
-    {
-        $tenant = Filament::getTenant();
-        
-        // Only allow creation for RAW Disposal company
-        return $tenant && $tenant->isRawDisposal();
-    }
-    
-    public static function canEdit(Model $record): bool
-    {
-        $tenant = Filament::getTenant();
-        
-        // Only allow editing for RAW Disposal company
-        return $tenant && $tenant->isRawDisposal();
-    }
-    
-    public static function canDelete(Model $record): bool
-    {
-        $tenant = Filament::getTenant();
-        
-        // Only allow deletion for RAW Disposal company
-        return $tenant && $tenant->isRawDisposal();
-    }
+    // Removed tenant restrictions - Financial resources should be visible for all tenants
+    // Data filtering is handled by getEloquentQuery() method based on company_id
 }

@@ -9,6 +9,8 @@ use App\Filament\Resources\VehicleInspections\Pages\ViewVehicleInspection;
 use App\Filament\Resources\VehicleInspections\Schemas\VehicleInspectionForm;
 use App\Filament\Resources\VehicleInspections\Tables\VehicleInspectionsTable;
 use App\Models\VehicleInspection;
+use BackedEnum;
+use UnitEnum;
 use Filament\Facades\Filament;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -20,13 +22,13 @@ class VehicleInspectionResource extends Resource
 {
     protected static ?string $model = VehicleInspection::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-clipboard-document-check';
+    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-clipboard-document-check';
     
     protected static ?string $navigationLabel = 'Vehicle Inspections';
     
     protected static ?string $modelLabel = 'Vehicle Inspection';
     
-    protected static string | \UnitEnum | null $navigationGroup = 'Fleet Management';
+    protected static string | UnitEnum | null $navigationGroup = 'Fleet Management';
     
     protected static ?int $navigationSort = 3;
     

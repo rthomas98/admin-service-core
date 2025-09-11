@@ -26,7 +26,7 @@ class DeliveryScheduleResource extends Resource
     
     protected static ?string $navigationLabel = 'Delivery Schedules';
     
-    protected static string | UnitEnum | null $navigationGroup = 'Scheduling';
+    protected static string | UnitEnum | null $navigationGroup = 'Operations';
     
     protected static ?int $navigationSort = 1;
 
@@ -70,35 +70,6 @@ class DeliveryScheduleResource extends Resource
         return $query;
     }
     
-    public static function canViewAny(): bool
-    {
-        $tenant = Filament::getTenant();
-        
-        // Only show for RAW Disposal company
-        return $tenant && $tenant->isRawDisposal();
-    }
-    
-    public static function canCreate(): bool
-    {
-        $tenant = Filament::getTenant();
-        
-        // Only allow creation for RAW Disposal company
-        return $tenant && $tenant->isRawDisposal();
-    }
-    
-    public static function canEdit(Model $record): bool
-    {
-        $tenant = Filament::getTenant();
-        
-        // Only allow editing for RAW Disposal company
-        return $tenant && $tenant->isRawDisposal();
-    }
-    
-    public static function canDelete(Model $record): bool
-    {
-        $tenant = Filament::getTenant();
-        
-        // Only allow deletion for RAW Disposal company
-        return $tenant && $tenant->isRawDisposal();
-    }
+    // Removed tenant restrictions - Operations resources should be visible for all tenants
+    // Data filtering is handled by getEloquentQuery() method based on company_id
 }

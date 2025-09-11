@@ -18,11 +18,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 });
 
-// Development mail viewer page (only in local environment)
+// Development pages (only in local environment)
 if (app()->environment('local')) {
     Route::get('/dev/mail', function () {
         return view('mail-dev');
     })->name('dev.mail');
+    
+    Route::get('/dev/clipboard-test', function () {
+        return view('test-clipboard');
+    })->name('dev.clipboard-test');
 }
 
 require __DIR__.'/settings.php';

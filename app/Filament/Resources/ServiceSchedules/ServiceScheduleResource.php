@@ -26,7 +26,7 @@ class ServiceScheduleResource extends Resource
     
     protected static ?string $navigationLabel = 'Service Schedules';
     
-    protected static string | UnitEnum | null $navigationGroup = 'Scheduling';
+    protected static string | UnitEnum | null $navigationGroup = 'Customer Management';
     
     protected static ?int $navigationSort = 2;
 

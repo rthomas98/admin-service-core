@@ -16,6 +16,9 @@ class DatabaseSeeder extends Seeder
             // Use the comprehensive Raw Disposal seeder
             RawDisposalSeeder::class,    // Creates company, users, customers, equipment, orders, etc.
             
+            // Field App driver accounts
+            FieldAppDriverSeeder::class,  // Creates test driver accounts for field app
+            
             // Optionally, you can uncomment these if you want to use the original seeders
             // CompanySeeder::class,        // Create companies first
             // CreateUsersSeeder::class,    // Create users and assign to companies

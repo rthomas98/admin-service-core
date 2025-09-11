@@ -175,7 +175,7 @@
 /* Accessible Links */
 a:not(.fi-btn) {
     color: var(--color-primary);
-    text-decoration: underline;
+    text-decoration: none;
     text-underline-offset: 2px;
 }
 

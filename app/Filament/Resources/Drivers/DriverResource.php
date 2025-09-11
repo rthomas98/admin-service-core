@@ -26,7 +26,7 @@ class DriverResource extends Resource
     
     protected static ?string $navigationLabel = 'Drivers';
     
-    protected static string | UnitEnum | null $navigationGroup = 'Team Management';
+    protected static string | UnitEnum | null $navigationGroup = 'Fleet Management';
     
     protected static ?int $navigationSort = 1;
 

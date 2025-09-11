@@ -138,4 +138,23 @@
     body {
         @apply bg-background text-foreground;
     }
+
+    /* Remove underlines from all links globally */
+    a {
+        text-decoration: none;
+    }
+
+    /* Add underline on hover for better UX */
+    a:hover {
+        text-decoration: underline;
+    }
+
+    /* Preserve underlines for explicitly styled components */
+    a[class*="underline"] {
+        text-decoration: underline;
+    }
+
+    a[class*="underline"]:hover {
+        text-decoration: underline;
+    }
 }
