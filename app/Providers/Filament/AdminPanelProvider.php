@@ -45,6 +45,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
+            ->darkMode(false)
             ->login(Login::class)
             ->passwordReset()
             ->emailVerification()
