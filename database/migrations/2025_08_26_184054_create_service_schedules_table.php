@@ -11,7 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('service_schedules', function (Blueprint $table) {
+        if (!Schema::hasTable('service_schedules')) {
+            Schema::create('service_schedules', function (Blueprint $table) {
             $table->id();
             $table->foreignId('company_id')->constrained('companies')->onDelete('cascade');
             $table->foreignId('equipment_id')->constrained('equipment')->onDelete('cascade');
@@ -42,7 +43,8 @@ return new class extends Migration
             $table->index(['status', 'scheduled_datetime'], 'svc_sched_status_datetime_idx');
             $table->index(['priority', 'scheduled_datetime'], 'svc_sched_priority_datetime_idx');
             $table->index('requires_followup', 'svc_sched_followup_idx');
-        });
+            });
+        }
     }
 
     /**
