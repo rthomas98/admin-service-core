@@ -11,7 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('notification_preferences', function (Blueprint $table) {
+        if (!Schema::hasTable('notification_preferences')) {
+            Schema::create('notification_preferences', function (Blueprint $table) {
             $table->id();
             $table->string('preferenceable_type'); // customer, driver, user
             $table->unsignedBigInteger('preferenceable_id');
@@ -30,9 +31,10 @@ return new class extends Migration
             $table->json('quiet_hours')->nullable(); // {"start": "22:00", "end": "08:00"}
             $table->timestamps();
             
-            // Indexes
-            $table->unique(['preferenceable_type', 'preferenceable_id']);
-        });
+            // Indexes (with custom name to avoid length issues)
+            $table->unique(['preferenceable_type', 'preferenceable_id'], 'notif_prefs_poly_unique');
+            });
+        }
     }
 
     /**
