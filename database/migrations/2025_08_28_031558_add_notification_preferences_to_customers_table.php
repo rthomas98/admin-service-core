@@ -9,12 +9,24 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('customers', function (Blueprint $table) {
-            $table->json('notification_preferences')->nullable()->after('email');
-            $table->boolean('notifications_enabled')->default(true)->after('notification_preferences');
-            $table->string('preferred_notification_method')->default('email')->after('notifications_enabled');
-            $table->string('sms_number')->nullable()->after('preferred_notification_method');
-            $table->boolean('sms_verified')->default(false)->after('sms_number');
-            $table->timestamp('sms_verified_at')->nullable()->after('sms_verified');
+            if (!Schema::hasColumn('customers', 'notification_preferences')) {
+                $table->json('notification_preferences')->nullable()->after('emails');
+            }
+            if (!Schema::hasColumn('customers', 'notifications_enabled')) {
+                $table->boolean('notifications_enabled')->default(true)->after('notification_preferences');
+            }
+            if (!Schema::hasColumn('customers', 'preferred_notification_method')) {
+                $table->string('preferred_notification_method')->default('email')->after('notifications_enabled');
+            }
+            if (!Schema::hasColumn('customers', 'sms_number')) {
+                $table->string('sms_number')->nullable()->after('preferred_notification_method');
+            }
+            if (!Schema::hasColumn('customers', 'sms_verified')) {
+                $table->boolean('sms_verified')->default(false)->after('sms_number');
+            }
+            if (!Schema::hasColumn('customers', 'sms_verified_at')) {
+                $table->timestamp('sms_verified_at')->nullable()->after('sms_verified');
+            }
         });
     }
 
