@@ -2,15 +2,13 @@
 
 namespace App\Filament\Resources\Customers\Schemas;
 
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Tabs;
-use Filament\Forms\Components\Hidden;
-use Filament\Schemas\Schema;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 class CustomerForm
 {
@@ -21,7 +19,7 @@ class CustomerForm
             ->components([
                 Hidden::make('company_id')
                     ->default(fn () => Filament::getTenant()->id),
-                    
+
                 Section::make('Customer Information')
                     ->description('Basic customer details and contact information')
                     ->columnSpanFull()
@@ -30,59 +28,62 @@ class CustomerForm
                         TextInput::make('customer_number')
                             ->label('Customer Number')
                             ->columnSpan(3),
-                        
+
                         DatePicker::make('customer_since')
                             ->label('Customer Since')
                             ->columnSpan(3),
-                        
+
                         TextInput::make('organization')
                             ->label('Organization/Company')
                             ->columnSpan(6),
-                        
+
                         TextInput::make('first_name')
                             ->label('First Name')
                             ->columnSpan(4),
-                        
+
                         TextInput::make('last_name')
                             ->label('Last Name')
                             ->columnSpan(4),
-                        
+
                         TextInput::make('name')
                             ->label('Display Name')
                             ->columnSpan(4),
-                        
+
                         TextInput::make('emails')
                             ->label('Email')
                             ->email()
                             ->columnSpan(4),
-                        
+
                         TextInput::make('phone')
                             ->label('Primary Phone')
                             ->tel()
-                            ->columnSpan(3),
-                        
+                            ->columnSpan(4),
+
                         TextInput::make('phone_ext')
-                            ->label('Extension')
+                            ->label('Primary Phone Ext')
+                            ->placeholder('Ext')
                             ->columnSpan(2),
-                        
+
                         TextInput::make('secondary_phone')
                             ->label('Secondary Phone')
                             ->tel()
-                            ->columnSpan(3),
-                        
+                            ->columnSpan(4),
+
                         TextInput::make('secondary_phone_ext')
-                            ->label('Extension')
+                            ->label('Secondary Phone Ext')
+                            ->placeholder('Ext')
                             ->columnSpan(2),
-                        
+
                         TextInput::make('fax')
                             ->label('Fax Number')
-                            ->columnSpan(3),
-                        
+                            ->columnSpan(4),
+
                         TextInput::make('fax_ext')
-                            ->label('Fax Extension')
+                            ->label('Fax Ext')
+                            ->placeholder('Ext')
                             ->columnSpan(2),
                     ]),
-                
+
                 Section::make('Primary Address')
                     ->description('Primary service and billing address')
                     ->columnSpanFull()
@@ -92,25 +93,25 @@ class CustomerForm
                             ->label('Street Address')
                             ->rows(2)
                             ->columnSpan(12),
-                        
+
                         TextInput::make('city')
                             ->label('City')
                             ->columnSpan(4),
-                        
+
                         TextInput::make('state')
                             ->label('State')
                             ->maxLength(2)
                             ->columnSpan(2),
-                        
+
                         TextInput::make('zip')
                             ->label('ZIP Code')
                             ->columnSpan(3),
-                        
+
                         TextInput::make('county')
                             ->label('County')
                             ->columnSpan(3),
                     ]),
-                
+
                 Section::make('Secondary Address')
                     ->description('Secondary or alternate address')
                     ->columnSpanFull()
@@ -123,7 +124,7 @@ class CustomerForm
                             ->rows(2)
                             ->columnSpan(12),
                     ]),
-                
+
                 Section::make('Business Information')
                     ->description('Additional business details')
                     ->columnSpanFull()
@@ -132,38 +133,38 @@ class CustomerForm
                         TextInput::make('delivery_method')
                             ->label('Delivery Method')
                             ->columnSpan(4),
-                        
+
                         TextInput::make('referral')
                             ->label('Referral Source')
                             ->columnSpan(4),
-                        
+
                         TextInput::make('external_id')
                             ->label('External ID')
                             ->columnSpan(4),
-                        
+
                         TextInput::make('business_type')
                             ->label('Business Type')
                             ->columnSpan(6),
-                        
+
                         TextInput::make('divisions')
                             ->label('Divisions')
                             ->columnSpan(6),
-                        
+
                         TextInput::make('tax_code_name')
                             ->label('Tax Code')
                             ->columnSpan(4),
-                        
+
                         Textarea::make('tax_exemption_details')
                             ->label('Tax Exemption Details')
                             ->rows(2)
                             ->columnSpan(4),
-                        
+
                         Textarea::make('tax_exempt_reason')
                             ->label('Tax Exempt Reason')
                             ->rows(2)
                             ->columnSpan(4),
                     ]),
-                
+
                 Section::make('Notes & Communication')
                     ->description('Internal and external messages')
                     ->columnSpanFull()
@@ -175,7 +176,7 @@ class CustomerForm
                             ->rows(3)
                             ->helperText('This message will be visible to the customer')
                             ->columnSpan(6),
-                        
+
                         Textarea::make('internal_memo')
                             ->label('Internal Memo')
                             ->rows(3)

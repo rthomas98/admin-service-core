@@ -8,26 +8,28 @@ use App\Filament\Resources\Equipment\Pages\ListEquipment;
 use App\Filament\Resources\Equipment\Pages\ViewEquipment;
 use App\Filament\Resources\Equipment\Schemas\EquipmentForm;
 use App\Filament\Resources\Equipment\Tables\EquipmentTable;
+use App\Filament\Traits\HasCompanyBasedVisibility;
 use App\Models\Equipment;
 use BackedEnum;
-use UnitEnum;
 use Filament\Facades\Filament;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
+use UnitEnum;
 
 class EquipmentResource extends Resource
 {
+    use HasCompanyBasedVisibility;
+
     protected static ?string $model = Equipment::class;
 
-    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-truck';
-    
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-truck';
+
     protected static ?string $navigationLabel = 'Equipment';
-    
-    protected static string | UnitEnum | null $navigationGroup = 'Operations';
-    
+
+    protected static string|UnitEnum|null $navigationGroup = 'Operations';
+
     protected static ?int $navigationSort = 1;
 
     public static function form(Schema $schema): Schema
@@ -56,20 +58,20 @@ class EquipmentResource extends Resource
             'edit' => EditEquipment::route('/{record}/edit'),
         ];
     }
-    
+
     public static function getEloquentQuery(): Builder
     {
         $query = parent::getEloquentQuery();
-        
+
         $tenant = Filament::getTenant();
-        
+
         if ($tenant) {
             $query->where('company_id', $tenant->id);
         }
-        
+
         return $query;
     }
-    
+
     // Removed tenant restrictions - Operations resources should be visible for all tenants
     // Data filtering is handled by getEloquentQuery() method based on company_id
 }

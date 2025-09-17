@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Invoices\Pages;
 
+use App\Enums\InvoiceStatus;
 use App\Filament\Resources\Invoices\InvoiceResource;
 use App\Filament\Resources\Invoices\Schemas\InvoiceForm;
 use Filament\Actions\Action;
@@ -9,8 +10,8 @@ use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Enums\Width;
 use Filament\Schemas\Schema;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Schemas\Components\TextEntry;
+use Filament\Schemas\Components\RepeatableEntry;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Grid;
 use Illuminate\Support\HtmlString;
@@ -57,14 +58,15 @@ class ViewInvoice extends ViewRecord
                                 TextEntry::make('status')
                                     ->label('Status')
                                     ->badge()
-                                    ->color(fn (string $state): string => match ($state) {
-                                        'draft' => 'gray',
-                                        'sent' => 'warning',
-                                        'paid' => 'success',
-                                        'overdue' => 'danger',
-                                        'cancelled' => 'gray',
+                                    ->color(fn (InvoiceStatus $state): string => match ($state) {
+                                        InvoiceStatus::Draft => 'gray',
+                                        InvoiceStatus::Sent => 'warning',
+                                        InvoiceStatus::Paid => 'success',
+                                        InvoiceStatus::Overdue => 'danger',
+                                        InvoiceStatus::Cancelled => 'gray',
                                         default => 'gray',
-                                    }),
+                                    })
+                                    ->formatStateUsing(fn (InvoiceStatus $state): string => $state->getLabel()),
                                 TextEntry::make('customer.name')
                                     ->label('Customer'),
                             ]),

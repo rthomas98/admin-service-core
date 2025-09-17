@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\NotificationTemplate;
 use App\Enums\NotificationCategory;
 use App\Enums\NotificationType;
+use App\Models\NotificationTemplate;
 use Illuminate\Database\Seeder;
 
 class NotificationTemplateSeeder extends Seeder
@@ -33,7 +33,7 @@ class NotificationTemplateSeeder extends Seeder
                 'variables' => ['customer_name', 'service_date', 'service_time', 'service_type', 'service_address', 'company_name'],
                 'is_active' => true,
             ],
-            
+
             // Payment Reminders
             [
                 'name' => 'Payment Due Reminder',
@@ -56,7 +56,7 @@ class NotificationTemplateSeeder extends Seeder
                 'variables' => ['customer_name', 'invoice_number', 'amount_due', 'due_date', 'company_phone', 'company_name'],
                 'is_active' => true,
             ],
-            
+
             // Driver Dispatch
             [
                 'name' => 'Driver Dispatch Notification',
@@ -69,7 +69,7 @@ class NotificationTemplateSeeder extends Seeder
                 'variables' => ['driver_name', 'route_name', 'start_time', 'stop_count', 'estimated_duration'],
                 'is_active' => true,
             ],
-            
+
             // Emergency Alerts
             [
                 'name' => 'Emergency Service Alert',
@@ -93,7 +93,7 @@ class NotificationTemplateSeeder extends Seeder
                 'variables' => ['customer_name', 'alert_title', 'alert_message', 'affected_service', 'resolution_time', 'company_phone', 'company_name'],
                 'is_active' => true,
             ],
-            
+
             // Quote Confirmation
             [
                 'name' => 'Quote Confirmation',
@@ -128,7 +128,7 @@ class NotificationTemplateSeeder extends Seeder
                 'variables' => ['customer_name', 'quote_number', 'service_type', 'quote_amount', 'valid_until', 'quote_details', 'company_phone', 'company_name'],
                 'is_active' => true,
             ],
-            
+
             // Service Completion
             [
                 'name' => 'Service Completion Confirmation',
@@ -151,7 +151,7 @@ class NotificationTemplateSeeder extends Seeder
                 'variables' => ['customer_name', 'service_type', 'service_date', 'completion_time', 'driver_name', 'service_notes', 'company_phone', 'company_name'],
                 'is_active' => true,
             ],
-            
+
             // Welcome Email
             [
                 'name' => 'Welcome New Customer',
@@ -180,7 +180,7 @@ class NotificationTemplateSeeder extends Seeder
                 'variables' => ['customer_name', 'company_name', 'account_number', 'service_address', 'start_date', 'service_type', 'first_service_date', 'collection_time', 'company_phone', 'company_email'],
                 'is_active' => true,
             ],
-            
+
             // Invoice Created
             [
                 'name' => 'New Invoice',
@@ -220,7 +220,7 @@ class NotificationTemplateSeeder extends Seeder
                 'variables' => ['customer_name', 'invoice_number', 'invoice_date', 'due_date', 'total_amount', 'invoice_details', 'company_phone', 'company_address', 'company_name'],
                 'is_active' => true,
             ],
-            
+
             // Route Change Notification
             [
                 'name' => 'Route Change Notification',
@@ -241,7 +241,41 @@ class NotificationTemplateSeeder extends Seeder
                 'variables' => ['customer_name', 'old_schedule', 'new_schedule', 'effective_date', 'change_reason', 'company_phone'],
                 'is_active' => true,
             ],
-            
+
+            // Payment Received
+            [
+                'name' => 'Payment Received Confirmation',
+                'slug' => 'payment-received',
+                'category' => NotificationCategory::INVOICE,
+                'available_types' => [NotificationType::EMAIL],
+                'subject' => 'Payment Received - Invoice #{{invoice_number}}',
+                'email_body' => '<h2>Payment Received</h2>
+                    <p>Dear {{customer_name}},</p>
+                    <p>Thank you for your payment! We have successfully received your payment for invoice <strong>#{{invoice_number}}</strong>.</p>
+                    <table style="width: 100%; border: 1px solid #ddd; padding: 10px;">
+                        <tr>
+                            <td><strong>Invoice Number:</strong></td>
+                            <td>{{invoice_number}}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Payment Amount:</strong></td>
+                            <td>${{payment_amount}}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Payment Date:</strong></td>
+                            <td>{{payment_date}}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Payment Method:</strong></td>
+                            <td>{{payment_method}}</td>
+                        </tr>
+                    </table>
+                    <p>Your account has been updated and your balance is now current.</p>
+                    <p>Thank you for your prompt payment and for choosing {{company_name}}!</p>',
+                'variables' => ['customer_name', 'invoice_number', 'payment_amount', 'payment_date', 'payment_method', 'company_name'],
+                'is_active' => true,
+            ],
+
             // Overdue Payment
             [
                 'name' => 'Overdue Payment Notice',
@@ -296,21 +330,21 @@ class NotificationTemplateSeeder extends Seeder
                 'is_system' => true,
                 'company_id' => null, // System templates are available to all companies
             ];
-            
+
             NotificationTemplate::updateOrCreate(
                 ['slug' => $dbTemplate['slug']],
                 $dbTemplate
             );
-            
+
             // Create SMS version if available
             if (isset($template['sms_body']) && in_array(NotificationType::SMS, $template['available_types'])) {
                 $smsTemplate = $dbTemplate;
-                $smsTemplate['slug'] = $template['slug'] . '-sms';
-                $smsTemplate['name'] = $template['name'] . ' (SMS)';
+                $smsTemplate['slug'] = $template['slug'].'-sms';
+                $smsTemplate['name'] = $template['name'].' (SMS)';
                 $smsTemplate['type'] = NotificationType::SMS;
                 $smsTemplate['body_template'] = $template['sms_body'];
                 $smsTemplate['subject_template'] = null;
-                
+
                 NotificationTemplate::updateOrCreate(
                     ['slug' => $smsTemplate['slug']],
                     $smsTemplate

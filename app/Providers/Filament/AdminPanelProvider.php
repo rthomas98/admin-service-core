@@ -2,36 +2,39 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Auth\Login;
+use App\Filament\Pages\Dashboard;
+use App\Http\Middleware\CheckCompanyOnboarding;
 use App\Models\Company;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Pages\Dashboard;
+use Filament\Navigation\NavigationGroup;
 use Filament\Panel;
 use Filament\PanelProvider;
+use Filament\Support\Assets\Js;
 use Filament\Support\Colors\Color;
-use Filament\Widgets\AccountWidget;
-use Filament\Navigation\NavigationGroup;
-use Filament\Widgets\FilamentInfoWidget;
-use App\Filament\Pages\Auth\Login;
+use Filament\Support\Facades\FilamentAsset;
+use Filament\View\PanelsRenderHook;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Filament\Support\Assets\Js;
-use Filament\Support\Facades\FilamentAsset;
-use Filament\View\PanelsRenderHook;
 
 class AdminPanelProvider extends PanelProvider
 {
     public function boot(): void
     {
-        // Register the clipboard fallback asset
+        // Register assets
         FilamentAsset::register([
+            // Clipboard fallback for older browsers
             Js::make('clipboard-fallback', resource_path('js/clipboard-fallback.js'))
+                ->loadedOnRequest(),
+            // Animation patch to fix easing array errors
+            Js::make('filament-animation-patch', resource_path('js/filament-animation-patch.js'))
                 ->loadedOnRequest(),
         ], 'app');
     }
@@ -45,6 +48,8 @@ class AdminPanelProvider extends PanelProvider
             ->login(Login::class)
             ->passwordReset()
             ->emailVerification()
+            ->tenant(Company::class)
+            ->tenantRegistration(false)
             ->brandName('Service Core')
             ->brandLogo(null)
             ->favicon(null)
@@ -61,6 +66,10 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make()
                     ->label('Customer Management')
                     ->icon('heroicon-o-user-group')
+                    ->collapsed(true),
+                NavigationGroup::make()
+                    ->label('Waste Management')
+                    ->icon('heroicon-o-truck')
                     ->collapsed(true),
                 NavigationGroup::make()
                     ->label('Financial')
@@ -83,30 +92,15 @@ class AdminPanelProvider extends PanelProvider
             ->sidebarCollapsibleOnDesktop()
             ->maxContentWidth('full')
             ->font('Inter')
-            ->tenant(Company::class)
-            ->tenantRegistration(false)
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
-            ->resources([
-                // Manually register Financial resources
-                \App\Filament\Resources\Invoices\InvoiceResource::class,
-                \App\Filament\Resources\Payments\PaymentResource::class,
-                \App\Filament\Resources\Pricings\PricingResource::class,
-                \App\Filament\Resources\VehicleFinanceResource::class,
-                \App\Filament\Resources\FinanceCompanies\FinanceCompanyResource::class,
-                // Manually register Operations resources
-                \App\Filament\Resources\WorkOrders\WorkOrderResource::class,
-                \App\Filament\Resources\EmergencyServices\EmergencyServiceResource::class,
-                \App\Filament\Resources\DeliverySchedules\DeliveryScheduleResource::class,
-                \App\Filament\Resources\Equipment\EquipmentResource::class,
-                \App\Filament\Resources\MaintenanceLogs\MaintenanceLogResource::class,
-            ])
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
                 Dashboard::class,
             ])
+            // Widgets are controlled by Dashboard::getWidgets() method
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
-                // Default widgets - minimal setup
+                // Additional widgets can be added here if needed
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -121,6 +115,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+                CheckCompanyOnboarding::class,
             ])
             ->renderHook(
                 PanelsRenderHook::BODY_END,

@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Actions;
+namespace App\Filament\Actions;
 
 use Filament\Actions\Action;
 

@@ -8,7 +8,7 @@ enum NotificationType: string
     case SMS = 'sms';
     case PUSH = 'push';
     case IN_APP = 'in_app';
-    
+
     public function label(): string
     {
         return match ($this) {
@@ -18,7 +18,7 @@ enum NotificationType: string
             self::IN_APP => 'In-App Notification',
         };
     }
-    
+
     public function icon(): string
     {
         return match ($this) {
@@ -27,5 +27,10 @@ enum NotificationType: string
             self::PUSH => 'heroicon-o-bell-alert',
             self::IN_APP => 'heroicon-o-bell',
         };
+    }
+
+    public function getLabel(): string
+    {
+        return $this->label();
     }
 }

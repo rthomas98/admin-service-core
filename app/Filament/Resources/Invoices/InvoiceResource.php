@@ -8,26 +8,28 @@ use App\Filament\Resources\Invoices\Pages\ListInvoices;
 use App\Filament\Resources\Invoices\Pages\ViewInvoice;
 use App\Filament\Resources\Invoices\Schemas\InvoiceForm;
 use App\Filament\Resources\Invoices\Tables\InvoicesTable;
+use App\Filament\Traits\HasCompanyBasedVisibility;
 use App\Models\Invoice;
 use BackedEnum;
-use UnitEnum;
 use Filament\Facades\Filament;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
+use UnitEnum;
 
 class InvoiceResource extends Resource
 {
+    use HasCompanyBasedVisibility;
+
     protected static ?string $model = Invoice::class;
 
-    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
-    
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-document-text';
+
     protected static ?string $navigationLabel = 'Invoices';
-    
-    protected static string | UnitEnum | null $navigationGroup = 'Financial';
-    
+
+    protected static string|UnitEnum|null $navigationGroup = 'Financial';
+
     protected static ?int $navigationSort = 1;
 
     public static function form(Schema $schema): Schema
@@ -56,7 +58,7 @@ class InvoiceResource extends Resource
             'edit' => EditInvoice::route('/{record}/edit'),
         ];
     }
-    
+
     public static function getWidgets(): array
     {
         return [
@@ -65,20 +67,20 @@ class InvoiceResource extends Resource
             \App\Filament\Widgets\OverdueInvoicesAlert::class,
         ];
     }
-    
+
     public static function getEloquentQuery(): Builder
     {
         $query = parent::getEloquentQuery();
-        
+
         $tenant = Filament::getTenant();
-        
+
         if ($tenant) {
             $query->where('company_id', $tenant->id);
         }
-        
+
         return $query;
     }
-    
+
     // Removed tenant restrictions - Financial resources should be visible for all tenants
     // Data filtering is handled by getEloquentQuery() method based on company_id
 }

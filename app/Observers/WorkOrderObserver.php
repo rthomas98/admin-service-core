@@ -2,8 +2,9 @@
 
 namespace App\Observers;
 
-use App\Models\WorkOrder;
 use App\Enums\WorkOrderStatus;
+use App\Jobs\GenerateInvoiceFromWorkOrder;
+use App\Models\WorkOrder;
 use Illuminate\Support\Facades\Log;
 
 class WorkOrderObserver
@@ -14,12 +15,12 @@ class WorkOrderObserver
     public function creating(WorkOrder $workOrder): void
     {
         // Auto-generate ticket number if not provided
-        if (!$workOrder->ticket_number) {
+        if (! $workOrder->ticket_number) {
             $workOrder->ticket_number = $this->generateTicketNumber($workOrder->company_id);
         }
 
         // Set default status if not provided
-        if (!$workOrder->status) {
+        if (! $workOrder->status) {
             $workOrder->status = WorkOrderStatus::DRAFT;
         }
     }
@@ -45,6 +46,15 @@ class WorkOrderObserver
         if ($workOrder->isDirty('status') && $workOrder->status === WorkOrderStatus::COMPLETED) {
             $workOrder->completed_at = now();
             $workOrder->saveQuietly();
+
+            // Automatically generate invoice for completed work orders
+            // Only for RAW Disposal company (company_id = 2)
+            if ($workOrder->company_id === 2 && ! $workOrder->invoice_id) {
+                GenerateInvoiceFromWorkOrder::dispatch($workOrder, true);
+                Log::info('Invoice generation job dispatched for completed work order', [
+                    'ticket_number' => $workOrder->ticket_number,
+                ]);
+            }
         }
 
         // Log status changes
@@ -99,8 +109,9 @@ class WorkOrderObserver
             ->where('company_id', $companyId)
             ->orderBy('id', 'desc')
             ->first();
-        
+
         $nextNumber = $lastTicket ? intval(substr($lastTicket->ticket_number, -5)) + 1 : 15150;
+
         return str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
     }
 }

@@ -8,26 +8,28 @@ use App\Filament\Resources\DeliverySchedules\Pages\ListDeliverySchedules;
 use App\Filament\Resources\DeliverySchedules\Pages\ViewDeliverySchedule;
 use App\Filament\Resources\DeliverySchedules\Schemas\DeliveryScheduleForm;
 use App\Filament\Resources\DeliverySchedules\Tables\DeliverySchedulesTable;
+use App\Filament\Traits\HasCompanyBasedVisibility;
 use App\Models\DeliverySchedule;
 use BackedEnum;
-use UnitEnum;
 use Filament\Facades\Filament;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
+use UnitEnum;
 
 class DeliveryScheduleResource extends Resource
 {
+    use HasCompanyBasedVisibility;
+
     protected static ?string $model = DeliverySchedule::class;
 
-    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-calendar-days';
-    
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-calendar-days';
+
     protected static ?string $navigationLabel = 'Delivery Schedules';
-    
-    protected static string | UnitEnum | null $navigationGroup = 'Operations';
-    
+
+    protected static string|UnitEnum|null $navigationGroup = 'Operations';
+
     protected static ?int $navigationSort = 1;
 
     public static function form(Schema $schema): Schema
@@ -56,20 +58,20 @@ class DeliveryScheduleResource extends Resource
             'edit' => EditDeliverySchedule::route('/{record}/edit'),
         ];
     }
-    
+
     public static function getEloquentQuery(): Builder
     {
         $query = parent::getEloquentQuery();
-        
+
         $tenant = Filament::getTenant();
-        
+
         if ($tenant) {
             $query->where('company_id', $tenant->id);
         }
-        
+
         return $query;
     }
-    
+
     // Removed tenant restrictions - Operations resources should be visible for all tenants
     // Data filtering is handled by getEloquentQuery() method based on company_id
 }

@@ -33,7 +33,7 @@ return Application::configure(basePath: dirname(__DIR__))
             ->everyFiveMinutes()
             ->withoutOverlapping()
             ->runInBackground();
-        
+
         // Retry failed notifications every hour
         $schedule->command('notifications:process --retry')
             ->hourly()

@@ -8,24 +8,27 @@ use App\Filament\Resources\Vehicles\Pages\ListVehicles;
 use App\Filament\Resources\Vehicles\Pages\ViewVehicle;
 use App\Filament\Resources\Vehicles\Schemas\VehicleForm;
 use App\Filament\Resources\Vehicles\Tables\VehiclesTable;
+use App\Filament\Traits\FleetManagementResource;
 use App\Models\Vehicle;
 use BackedEnum;
-use UnitEnum;
+use Filament\Facades\Filament;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Model;
+use UnitEnum;
 
 class VehicleResource extends Resource
 {
+    use FleetManagementResource;
+
     protected static ?string $model = Vehicle::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTruck;
-    
-    protected static string | UnitEnum | null $navigationGroup = 'Fleet Management';
-    
+
+    protected static string|UnitEnum|null $navigationGroup = 'Fleet Management';
+
     protected static ?int $navigationSort = 1;
 
     public static function form(Schema $schema): Schema
@@ -54,35 +57,35 @@ class VehicleResource extends Resource
             'edit' => EditVehicle::route('/{record}/edit'),
         ];
     }
-    
+
     public static function canViewAny(): bool
     {
         $tenant = Filament::getTenant();
-        
+
         // Only show for LIV Transport company
         return $tenant && $tenant->isLivTransport();
     }
-    
+
     public static function canCreate(): bool
     {
         $tenant = Filament::getTenant();
-        
+
         // Only allow creation for LIV Transport company
         return $tenant && $tenant->isLivTransport();
     }
-    
+
     public static function canEdit(Model $record): bool
     {
         $tenant = Filament::getTenant();
-        
+
         // Only allow editing for LIV Transport company
         return $tenant && $tenant->isLivTransport();
     }
-    
+
     public static function canDelete(Model $record): bool
     {
         $tenant = Filament::getTenant();
-        
+
         // Only allow deletion for LIV Transport company
         return $tenant && $tenant->isLivTransport();
     }

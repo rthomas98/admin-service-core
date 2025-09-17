@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use App\Enums\WorkOrderStatus;
-use App\Enums\WorkOrderAction;
 use App\Enums\TimePeriod;
+use App\Enums\WorkOrderAction;
+use App\Enums\WorkOrderStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -51,14 +51,27 @@ class WorkOrder extends Model
         'status',
         'completed_at',
         'service_order_id',
+        'equipment_id',
+        'vehicle_id',
+        'scheduled_date',
+        'start_date',
+        'end_date',
+        'estimated_cost',
+        'invoice_id',
+        'invoiced_at',
     ];
 
     protected $casts = [
         'service_date' => 'date',
+        'scheduled_date' => 'date',
+        'start_date' => 'date',
+        'end_date' => 'date',
         'cod_amount' => 'decimal:2',
+        'estimated_cost' => 'decimal:2',
         'customer_signature_date' => 'datetime',
         'driver_signature_date' => 'datetime',
         'completed_at' => 'datetime',
+        'invoiced_at' => 'datetime',
         'status' => WorkOrderStatus::class,
         'action' => WorkOrderAction::class,
         'time_on_site_period' => TimePeriod::class,
@@ -96,6 +109,21 @@ class WorkOrder extends Model
     public function serviceOrder(): BelongsTo
     {
         return $this->belongsTo(ServiceOrder::class);
+    }
+
+    public function equipment(): BelongsTo
+    {
+        return $this->belongsTo(Equipment::class);
+    }
+
+    public function vehicle(): BelongsTo
+    {
+        return $this->belongsTo(Vehicle::class);
+    }
+
+    public function invoice(): BelongsTo
+    {
+        return $this->belongsTo(Invoice::class);
     }
 
     public function getFullAddressAttribute(): string
@@ -145,12 +173,12 @@ class WorkOrder extends Model
 
     public function hasCustomerSignature(): bool
     {
-        return !empty($this->customer_signature);
+        return ! empty($this->customer_signature);
     }
 
     public function hasDriverSignature(): bool
     {
-        return !empty($this->driver_signature);
+        return ! empty($this->driver_signature);
     }
 
     public function isFullySigned(): bool
@@ -202,7 +230,7 @@ class WorkOrder extends Model
     public function scopeThisMonth(Builder $query): Builder
     {
         return $query->whereMonth('service_date', now()->month)
-                     ->whereYear('service_date', now()->year);
+            ->whereYear('service_date', now()->year);
     }
 
     public function scopeDateRange(Builder $query, $startDate, $endDate): Builder
@@ -219,13 +247,13 @@ class WorkOrder extends Model
     {
         return $query->where(function ($q) use ($search) {
             $q->where('ticket_number', 'like', "%{$search}%")
-              ->orWhere('po_number', 'like', "%{$search}%")
-              ->orWhere('dispatch_number', 'like', "%{$search}%")
-              ->orWhere('customer_name', 'like', "%{$search}%")
-              ->orWhere('address', 'like', "%{$search}%")
-              ->orWhereHas('customer', function ($q) use ($search) {
-                  $q->where('name', 'like', "%{$search}%");
-              });
+                ->orWhere('po_number', 'like', "%{$search}%")
+                ->orWhere('dispatch_number', 'like', "%{$search}%")
+                ->orWhere('customer_name', 'like', "%{$search}%")
+                ->orWhere('address', 'like', "%{$search}%")
+                ->orWhereHas('customer', function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                });
         });
     }
 
@@ -235,8 +263,8 @@ class WorkOrder extends Model
         return [
             'company_id' => 'required|exists:companies,id',
             'service_date' => 'required|date',
-            'status' => 'required|in:' . implode(',', array_column(WorkOrderStatus::cases(), 'value')),
-            'action' => 'required|in:' . implode(',', array_column(WorkOrderAction::cases(), 'value')),
+            'status' => 'required|in:'.implode(',', array_column(WorkOrderStatus::cases(), 'value')),
+            'action' => 'required|in:'.implode(',', array_column(WorkOrderAction::cases(), 'value')),
             'time_on_site_period' => 'nullable|in:AM,PM',
             'time_off_site_period' => 'nullable|in:AM,PM',
             'driver_id' => 'nullable|exists:drivers,id',

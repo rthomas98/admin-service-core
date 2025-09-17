@@ -35,13 +35,13 @@ return new class extends Migration
             $table->json('photos')->nullable(); // before/after photos
             $table->timestamps();
 
-            // Indexes for performance
-            $table->index(['company_id', 'scheduled_datetime']);
-            $table->index(['company_id', 'technician_id', 'scheduled_datetime']);
-            $table->index(['equipment_id', 'service_type']);
-            $table->index(['status', 'scheduled_datetime']);
-            $table->index(['priority', 'scheduled_datetime']);
-            $table->index('requires_followup');
+            // Indexes for performance (with custom names to avoid length issues)
+            $table->index(['company_id', 'scheduled_datetime'], 'svc_sched_company_datetime_idx');
+            $table->index(['company_id', 'technician_id', 'scheduled_datetime'], 'svc_sched_comp_tech_datetime_idx');
+            $table->index(['equipment_id', 'service_type'], 'svc_sched_equip_type_idx');
+            $table->index(['status', 'scheduled_datetime'], 'svc_sched_status_datetime_idx');
+            $table->index(['priority', 'scheduled_datetime'], 'svc_sched_priority_datetime_idx');
+            $table->index('requires_followup', 'svc_sched_followup_idx');
         });
     }
 

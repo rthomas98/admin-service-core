@@ -5,19 +5,38 @@ namespace App\Models;
 use App\Enums\NotificationCategory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
-class Customer extends Model
+class Customer extends Authenticatable
 {
-    use HasFactory;
+    use HasApiTokens, HasFactory, Notifiable;
+
     protected static function booted(): void
     {
+        // Use Filament's tenant system instead of current_company_id
         static::addGlobalScope('company', function (Builder $builder) {
-            if (Auth::check() && Auth::user()->current_company_id) {
-                $builder->where('customers.company_id', Auth::user()->current_company_id);
+            // Only apply scope in Filament admin context
+            if (class_exists(\Filament\Facades\Filament::class)) {
+                $tenant = \Filament\Facades\Filament::getTenant();
+                if ($tenant) {
+                    $builder->where('customers.company_id', $tenant->id);
+                }
+            }
+        });
+
+        // Optional: Add logging for debugging purposes (can be removed in production)
+        static::saving(function ($customer) {
+            if (config('app.debug')) {
+                \Log::debug('Customer saving', [
+                    'id' => $customer->id,
+                    'company_id' => $customer->company_id,
+                    'dirty_attributes' => array_keys($customer->getDirty()),
+                ]);
             }
         });
     }
@@ -59,16 +78,25 @@ class Customer extends Model
         'sms_number',
         'sms_verified',
         'sms_verified_at',
+        'portal_access',
+        'portal_password',
+        'email_verified_at',
+        'remember_token',
     ];
+
+    protected $appends = ['full_name'];
 
     protected function casts(): array
     {
         return [
             'customer_since' => 'date',
+            'emails' => 'array',
             'notification_preferences' => 'array',
             'notifications_enabled' => 'boolean',
             'sms_verified' => 'boolean',
             'sms_verified_at' => 'datetime',
+            'portal_access' => 'boolean',
+            'email_verified_at' => 'datetime',
         ];
     }
 
@@ -80,6 +108,26 @@ class Customer extends Model
     public function notifications(): MorphMany
     {
         return $this->morphMany(Notification::class, 'recipient');
+    }
+
+    public function serviceRequests(): HasMany
+    {
+        return $this->hasMany(ServiceRequest::class);
+    }
+
+    public function invites(): HasMany
+    {
+        return $this->hasMany(CustomerInvite::class);
+    }
+
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class);
+    }
+
+    public function serviceOrders(): HasMany
+    {
+        return $this->hasMany(ServiceOrder::class);
     }
 
     public function getFullNameAttribute(): ?string
@@ -97,7 +145,7 @@ class Customer extends Model
 
     public function getDisplayPhoneAttribute(): ?string
     {
-        if (!$this->phone) {
+        if (! $this->phone) {
             return null;
         }
 
@@ -114,12 +162,12 @@ class Customer extends Model
     {
         return $query->where(function ($q) use ($search) {
             $q->where('name', 'like', "%{$search}%")
-              ->orWhere('organization', 'like', "%{$search}%")
-              ->orWhere('first_name', 'like', "%{$search}%")
-              ->orWhere('last_name', 'like', "%{$search}%")
-              ->orWhere('phone', 'like', "%{$search}%")
-              ->orWhere('address', 'like', "%{$search}%")
-              ->orWhere('customer_number', 'like', "%{$search}%");
+                ->orWhere('organization', 'like', "%{$search}%")
+                ->orWhere('first_name', 'like', "%{$search}%")
+                ->orWhere('last_name', 'like', "%{$search}%")
+                ->orWhere('phone', 'like', "%{$search}%")
+                ->orWhere('address', 'like', "%{$search}%")
+                ->orWhere('customer_number', 'like', "%{$search}%");
         });
     }
 
@@ -151,19 +199,19 @@ class Customer extends Model
     // Notification Preference Methods
     public function isNotificationEnabled(NotificationCategory $category): bool
     {
-        if (!$this->notifications_enabled) {
+        if (! $this->notifications_enabled) {
             return false;
         }
 
         $preferences = $this->notification_preferences ?? [];
-        
+
         return $preferences[$category->value]['enabled'] ?? true;
     }
 
     public function getNotificationMethod(NotificationCategory $category): string
     {
         $preferences = $this->notification_preferences ?? [];
-        
+
         return $preferences[$category->value]['method'] ?? $this->preferred_notification_method;
     }
 
@@ -177,15 +225,54 @@ class Customer extends Model
         // Try to get the first email from the emails field, or use a default email field
         if ($this->emails) {
             $emails = is_array($this->emails) ? $this->emails : json_decode($this->emails, true);
+
             return $emails[0] ?? null;
         }
-        
+
         return null;
     }
 
     public function updateNotificationPreferences(array $preferences): void
     {
         $this->update(['notification_preferences' => $preferences]);
+    }
+
+    // Authentication Methods
+    public function getAuthIdentifierName(): string
+    {
+        return 'id';
+    }
+
+    public function getAuthPassword(): string
+    {
+        return $this->portal_password;
+    }
+
+    public function getEmailForPasswordReset(): string
+    {
+        return $this->getNotificationEmail();
+    }
+
+    public function hasPortalAccess(): bool
+    {
+        return $this->portal_access && ! empty($this->portal_password);
+    }
+
+    public function enablePortalAccess(string $password): void
+    {
+        $this->update([
+            'portal_access' => true,
+            'portal_password' => bcrypt($password),
+        ]);
+    }
+
+    public function disablePortalAccess(): void
+    {
+        $this->update([
+            'portal_access' => false,
+            'portal_password' => null,
+            'remember_token' => null,
+        ]);
     }
 
     // Validation Rules

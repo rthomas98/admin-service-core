@@ -14,11 +14,13 @@ class VerifyEmailController extends Controller
     public function __invoke(EmailVerificationRequest $request): RedirectResponse
     {
         if ($request->user()->hasVerifiedEmail()) {
-            return redirect()->intended(route('dashboard', absolute: false).'?verified=1');
+            // Redirect to Filament admin panel instead of dashboard
+            return redirect()->intended('/admin?verified=1');
         }
 
         $request->fulfill();
 
-        return redirect()->intended(route('dashboard', absolute: false).'?verified=1');
+        // Redirect to Filament admin panel instead of dashboard
+        return redirect()->intended('/admin?verified=1');
     }
 }

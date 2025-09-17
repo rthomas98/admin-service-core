@@ -1,0 +1,90 @@
+/* ========================================
+   FILAMENT NOTIFICATION ANIMATION FIX
+   Fixes: "Easing may not be set to a list of values" error
+   ======================================== */
+
+/* Override notification animations with Web Animations API compatible values */
+@layer utilities {
+    /* Fix for Filament notifications animation easing */
+    .fi-notification,
+    [x-data*="notificationComponent"],
+    [x-transition\:enter],
+    [x-transition\:leave] {
+        /* Force single easing value instead of potential array */
+        animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+
+    /* Specific fix for notification container animations */
+    .fi-no-notification,
+    .fi-no-notifications-wrapper {
+        /* Use standard easing function */
+        --animation-timing: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Override animate directive if it's using invalid easing */
+    [x-animate],
+    [x-transition] {
+        animation-timing-function: ease-in-out !important;
+    }
+
+    /* Fallback for any elements using animate() method */
+    .fi-notification-close-btn,
+    .fi-notification-actions {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+}
+
+/* Disable problematic animations if errors persist */
+@supports not (animation: test) {
+    .fi-notification {
+        animation: none !important;
+        transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out !important;
+    }
+}
+
+/* Alternative animation using only CSS transitions */
+.fi-notification {
+    transition:
+        opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        visibility 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Ensure notification enter/leave animations use valid timing */
+.fi-notification[x-show] {
+    transition-duration: 300ms !important;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Fix for potential tailwindcss-animate conflicts */
+@keyframes filament-notification-enter {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes filament-notification-leave {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+}
+
+/* Apply fixed animations */
+.fi-notification.entering {
+    animation: filament-notification-enter 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
+}
+
+.fi-notification.leaving {
+    animation: filament-notification-leave 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
+}

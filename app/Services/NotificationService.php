@@ -5,19 +5,19 @@ namespace App\Services;
 use App\Enums\NotificationCategory;
 use App\Enums\NotificationStatus;
 use App\Enums\NotificationType;
+use App\Mail\GenericNotification;
 use App\Models\Customer;
 use App\Models\Driver;
+use App\Models\EmergencyService;
+use App\Models\Invoice;
 use App\Models\Notification;
 use App\Models\NotificationTemplate;
+use App\Models\Payment;
 use App\Models\User;
 use App\Models\WorkOrder;
-use App\Models\Invoice;
-use App\Models\Payment;
-use App\Models\EmergencyService;
-use App\Mail\GenericNotification;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Log;
 use Exception;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class NotificationService
 {
@@ -34,13 +34,14 @@ class NotificationService
     public function send(Notification $notification): bool
     {
         try {
-            if (!$notification->shouldSendNow()) {
+            if (! $notification->shouldSendNow()) {
                 return false;
             }
 
             // Check recipient preferences
-            if (!$this->checkRecipientPreferences($notification)) {
+            if (! $this->checkRecipientPreferences($notification)) {
                 $notification->markAsFailed('Recipient has disabled this type of notification');
+
                 return false;
             }
 
@@ -54,9 +55,11 @@ class NotificationService
 
             if ($result) {
                 $notification->markAsSent();
+
                 return true;
             } else {
                 $notification->markAsFailed('Failed to send notification');
+
                 return false;
             }
         } catch (Exception $e) {
@@ -65,6 +68,7 @@ class NotificationService
                 'error' => $e->getMessage(),
             ]);
             $notification->markAsFailed($e->getMessage());
+
             return false;
         }
     }
@@ -75,7 +79,7 @@ class NotificationService
     protected function sendEmail(Notification $notification): bool
     {
         try {
-            if (!$notification->recipient_email) {
+            if (! $notification->recipient_email) {
                 return false;
             }
 
@@ -88,6 +92,7 @@ class NotificationService
                 'notification_id' => $notification->id,
                 'error' => $e->getMessage(),
             ]);
+
             return false;
         }
     }
@@ -98,7 +103,7 @@ class NotificationService
     protected function sendSms(Notification $notification): bool
     {
         try {
-            if (!$notification->recipient_phone || !$this->smsService) {
+            if (! $notification->recipient_phone || ! $this->smsService) {
                 return false;
             }
 
@@ -111,6 +116,7 @@ class NotificationService
                 'notification_id' => $notification->id,
                 'error' => $e->getMessage(),
             ]);
+
             return false;
         }
     }
@@ -148,13 +154,14 @@ class NotificationService
                 ->active()
                 ->first();
 
-            if (!$template) {
+            if (! $template) {
                 Log::warning('Notification template not found', ['slug' => $templateSlug]);
+
                 return null;
             }
 
             $rendered = $template->render($data);
-            
+
             $notification = $this->createNotification(
                 recipient: $recipient,
                 type: $type ?? $template->type,
@@ -165,7 +172,7 @@ class NotificationService
                 scheduledAt: $scheduledAt
             );
 
-            if (!$scheduledAt) {
+            if (! $scheduledAt) {
                 $this->send($notification);
             }
 
@@ -175,6 +182,7 @@ class NotificationService
                 'template' => $templateSlug,
                 'error' => $e->getMessage(),
             ]);
+
             return null;
         }
     }
@@ -219,8 +227,8 @@ class NotificationService
             $recipient instanceof Customer => [
                 'type' => 'customer',
                 'id' => $recipient->id,
-                'email' => $recipient->email,
-                'phone' => $recipient->phone,
+                'email' => $recipient->getNotificationEmail(),
+                'phone' => $recipient->sms_number ?? $recipient->phone,
             ],
             $recipient instanceof Driver => [
                 'type' => 'driver',
@@ -327,7 +335,7 @@ class NotificationService
     {
         // Send to all active drivers
         $drivers = Driver::active()->get();
-        
+
         foreach ($drivers as $driver) {
             $this->sendFromTemplate(
                 'emergency-alert',
@@ -390,14 +398,14 @@ class NotificationService
         $notifications = Notification::failed()
             ->where('retry_count', '<', 3)
             ->get();
-        
+
         $count = 0;
 
         foreach ($notifications as $notification) {
             if ($notification->canRetry()) {
                 $notification->status = NotificationStatus::PENDING;
                 $notification->save();
-                
+
                 if ($this->send($notification)) {
                     $count++;
                 }

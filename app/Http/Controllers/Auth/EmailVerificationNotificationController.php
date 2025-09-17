@@ -14,7 +14,8 @@ class EmailVerificationNotificationController extends Controller
     public function store(Request $request): RedirectResponse
     {
         if ($request->user()->hasVerifiedEmail()) {
-            return redirect()->intended(route('dashboard', absolute: false));
+            // Redirect to Filament admin panel instead of dashboard
+            return redirect()->intended('/admin');
         }
 
         $request->user()->sendEmailVerificationNotification();

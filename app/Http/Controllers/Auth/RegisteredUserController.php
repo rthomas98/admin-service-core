@@ -46,6 +46,7 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        // Redirect to Filament admin panel instead of dashboard
+        return redirect()->intended('/admin');
     }
 }

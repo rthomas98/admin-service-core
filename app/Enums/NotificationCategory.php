@@ -15,7 +15,7 @@ enum NotificationCategory: string
     case MAINTENANCE = 'maintenance';
     case DELIVERY = 'delivery';
     case PICKUP = 'pickup';
-    
+
     public function label(): string
     {
         return match ($this) {
@@ -32,7 +32,7 @@ enum NotificationCategory: string
             self::PICKUP => 'Pickup',
         };
     }
-    
+
     public function color(): string
     {
         return match ($this) {
@@ -49,7 +49,7 @@ enum NotificationCategory: string
             self::PICKUP => 'primary',
         };
     }
-    
+
     public function priority(): int
     {
         return match ($this) {
@@ -64,5 +64,10 @@ enum NotificationCategory: string
             self::SYSTEM_UPDATE => 9,
             self::MARKETING => 10,
         };
+    }
+
+    public function getLabel(): string
+    {
+        return $this->label();
     }
 }

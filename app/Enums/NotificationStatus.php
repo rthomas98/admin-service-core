@@ -11,7 +11,7 @@ enum NotificationStatus: string
     case SCHEDULED = 'scheduled';
     case DELIVERED = 'delivered';
     case BOUNCED = 'bounced';
-    
+
     public function label(): string
     {
         return match ($this) {
@@ -24,7 +24,7 @@ enum NotificationStatus: string
             self::BOUNCED => 'Bounced',
         };
     }
-    
+
     public function color(): string
     {
         return match ($this) {
@@ -37,7 +37,7 @@ enum NotificationStatus: string
             self::BOUNCED => 'danger',
         };
     }
-    
+
     public function icon(): string
     {
         return match ($this) {
@@ -49,5 +49,10 @@ enum NotificationStatus: string
             self::DELIVERED => 'heroicon-o-check-circle',
             self::BOUNCED => 'heroicon-o-exclamation-triangle',
         };
+    }
+
+    public function getLabel(): string
+    {
+        return $this->label();
     }
 }
