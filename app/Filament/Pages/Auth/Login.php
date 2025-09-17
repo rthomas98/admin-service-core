@@ -13,15 +13,27 @@ class Login extends BaseLogin
      */
     protected function throwFailureValidationException(): never
     {
+        // Check if authentication itself failed (wrong password)
+        $credentials = [
+            'email' => $this->data['email'],
+            'password' => $this->data['password'],
+        ];
+
+        if (!\Auth::validate($credentials)) {
+            // Authentication failed - wrong email or password
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'data.email' => __('filament-panels::auth/pages/login.messages.failed'),
+            ]);
+        }
+
+        // Authentication would succeed, check for other issues
         $user = \App\Models\User::where('email', $this->data['email'])->first();
 
-        if ($user) {
-            // Check if user has companies
-            if ($user->companies()->count() === 0) {
-                throw \Illuminate\Validation\ValidationException::withMessages([
-                    'data.email' => __('Your account is not associated with any companies. Please contact your administrator.'),
-                ]);
-            }
+        if ($user && $user->companies()->count() === 0) {
+            // User exists but has no companies
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'data.email' => __('Your account is not associated with any companies. Please contact your administrator.'),
+            ]);
         }
 
         // Default error
