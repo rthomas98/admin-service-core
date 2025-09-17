@@ -12,10 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('work_orders', function (Blueprint $table) {
-            $table->foreignId('invoice_id')->nullable()->after('vehicle_id')->constrained()->nullOnDelete();
-            $table->timestamp('invoiced_at')->nullable()->after('completed_at');
-
-            $table->index('invoice_id');
+            if (!Schema::hasColumn('work_orders', 'invoice_id')) {
+                $table->foreignId('invoice_id')->nullable()->after('service_order_id')->constrained()->nullOnDelete();
+                $table->index('invoice_id');
+            }
+            if (!Schema::hasColumn('work_orders', 'invoiced_at')) {
+                $table->timestamp('invoiced_at')->nullable()->after('completed_at');
+            }
         });
     }
 
